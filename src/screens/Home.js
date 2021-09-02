@@ -20,236 +20,280 @@ import {
 } from 'react-native';
 import {GREEN_COLOR, MAIN_PADDING} from '../constant/styles';
 import * as Animatable from 'react-native-animatable';
+import {useGetAllBooks} from '../react-query/useGetAllBooks';
+import {AirbnbRating, Rating} from 'react-native-ratings';
+import { useNavigation } from '@react-navigation/core';
 const FlatListAnimatable = Animatable.createAnimatableComponent(FlatList);
 const {width} = Dimensions.get('screen');
 const HomeScreen = () => {
   const [selectIndex, setSelectedIndex] = useState(1);
+  const {data, isLoading, isFetching, isError, isSuccess} = useGetAllBooks();
+  const navigation=useNavigation();
   return (
     <>
       <StatusBar backgroundColor={GREEN_COLOR} />
-      <ScrollView
-        contentContainerStyle={styles.container}
-        style={styles.container}>
-        <View style={styles.circleHeader} />
-        <VStack pb={MAIN_PADDING * 2}>
-          <HStack
-            justifyContent="space-between"
-            alignContent="center"
-            zIndex={15}
-            p={MAIN_PADDING}
-            mt={MAIN_PADDING * 3}>
-            <Heading fontFamily="aviny" style={{zIndex: 15, color: '#fff'}}>
-              Our Top Picks
+      {(isLoading || isFetching) && <Text>loading</Text>}
+      {isSuccess && (
+        <ScrollView
+          contentContainerStyle={styles.container}
+          style={styles.container}>
+          <View style={styles.circleHeader} />
+          <VStack pb={MAIN_PADDING * 2}>
+            <HStack
+              justifyContent="space-between"
+              alignContent="center"
+              zIndex={15}
+              p={MAIN_PADDING}
+              mt={MAIN_PADDING * 3}>
+              <Heading fontFamily="aviny" style={{zIndex: 15, color: '#fff'}}>
+                Our Top Picks
+              </Heading>
+              <TouchableOpacity
+              onPress={()=>navigation.openDrawer()}
+                style={{
+                  zIndex: 15,
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={require('../assets/icons/menu.png')}
+                  resizeMode="stretch"
+                />
+              </TouchableOpacity>
+            </HStack>
+            <FlatListAnimatable
+              useNativeDriver
+              animation={{
+                0: {transform: [{translateX: -400}]},
+                1: {transform: [{translateX: 0}]},
+              }}
+              duration={1000}
+              style={{zIndex: 15, marginTop: PixelRatio.get() * 10}}
+              horizontal
+              snapToInterval={width / 3}
+              showsHorizontalScrollIndicator={false}
+              onScroll={event => {
+                const contentOffset = event.nativeEvent.contentOffset.x;
+                const selectedIndex = contentOffset / (width / 3 - width / 12);
+                setSelectedIndex(Math.floor(selectedIndex) + 1);
+              }}
+              data={data}
+              renderItem={({item, index}) => (
+                <Animatable.View
+                  style={{
+                    alignItems: 'center',
+                  }}
+                  animation={{0: {opacity: 0}, 1: {opacity: 1}}}
+                  duration={500}
+                  delay={index * 300}
+                  useNativeDriver>
+                  <Image
+                    resizeMode="stretch"
+                    source={{
+                      uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                    }}
+                    style={{
+                      width: width / 3 - width / 12,
+                      marginHorizontal: width / 24,
+                      height: 130,
+                      transform: [{scale: selectIndex === index ? 1 : 0.8}],
+                    }}
+                  />
+                  <Box
+                    width={width / 3 - width / 12}
+                    justifyContent="center"
+                    alignItems="center">
+                    <Heading
+                      fontFamily="aviny"
+                      fontSize={selectIndex === index ? 25 : 18}>
+                      {item.name}
+                    </Heading>
+                  </Box>
+                  <Text
+                    fontFamily="aviny"
+                    fontSize={selectIndex === index ? 20 : 16}
+                    textAlign="center"
+                    color={
+                      selectIndex === index
+                        ? 'rgba(36,33,38,0.8)'
+                        : 'rgba(36,33,38,0.5)'
+                    }>
+                    {item.writer}
+                  </Text>
+                </Animatable.View>
+              )}
+            />
+            <Heading fontFamily="aviny" m={MAIN_PADDING}>
+              Best Sellers
             </Heading>
-            <TouchableOpacity
-              style={{
-                zIndex: 15,
-                justifyContent: 'center',
-              }}>
-              <Image
-                source={require('../assets/icons/menu.png')}
-                resizeMode="stretch"
-              />
-            </TouchableOpacity>
-          </HStack>
-          <FlatListAnimatable
-            useNativeDriver
-            animation={{
-              0: {transform: [{translateX: -400}]},
-              1: {transform: [{translateX: 0}]},
-            }}
-            duration={1000}
-            style={{zIndex: 15, marginTop: PixelRatio.get() * 10}}
-            horizontal
-            snapToInterval={width / 3}
-            showsHorizontalScrollIndicator={false}
-            onScroll={event => {
-              const contentOffset = event.nativeEvent.contentOffset.x;
-              const selectedIndex = contentOffset / (width / 3 - width / 12);
-              setSelectedIndex(Math.floor(selectedIndex) + 1);
-            }}
-            data={[1, 2, 3, 4, 5, 6]}
-            renderItem={({item, index}) => (
-              <Animatable.View
-                animation={{0: {opacity: 0}, 1: {opacity: 1}}}
-                duration={500}
-                delay={index * 300}
-                useNativeDriver>
-                <Box
-                  bg="#000"
-                  style={{
-                    width: width / 3 - width / 12,
-                    marginHorizontal: width / 24,
-                    height: 130,
-                    borderRadius: 10,
-                    transform: [{scale: selectIndex === index ? 1 : 0.8}],
-                  }}
-                />
-                <Heading
-                  fontFamily="aviny"
-                  fontSize={selectIndex === index ? 25 : 18}
-                  textAlign="center">
-                  Title
-                </Heading>
-                <Text
-                  fontFamily="aviny"
-                  fontSize={selectIndex === index ? 20 : 16}
-                  textAlign="center"
-                  color={
-                    selectIndex === index
-                      ? 'rgba(36,33,38,0.8)'
-                      : 'rgba(36,33,38,0.5)'
-                  }>
-                  Author
-                </Text>
-              </Animatable.View>
-            )}
-          />
-          <Heading fontFamily="aviny" m={MAIN_PADDING}>
-            Best Sellers
-          </Heading>
-          <FlatListAnimatable
-            useNativeDriver
-            animation={{
-              0: {transform: [{translateX: -400}]},
-              1: {transform: [{translateX: 0}]},
-            }}
-            duration={1000}
-            delay={500}
-            horizontal
-            snapToInterval={width / 2 - width / 6 + MAIN_PADDING * 2}
-            showsHorizontalScrollIndicator={false}
-            data={[1, 2, 3, 4, 5, 6]}
-            renderItem={({item, index}) => (
-              <Animatable.View
-                animation={{0: {opacity: 0}, 1: {opacity: 1}}}
-                duration={500}
-                delay={index * 300}
-                useNativeDriver>
-                <Box
-                  bg="#000"
-                  style={{
-                    width: width / 2 - width / 6,
-                    marginHorizontal: MAIN_PADDING,
-                    height: 170,
-                    borderRadius: 10,
-                  }}
-                />
-                <Text color="rgba(33,33,33,1)" textAlign="center" fontSize="lg">
-                  Title
-                </Text>
-                <Text
-                  color="rgba(33,33,33,0.5)"
-                  textAlign="center"
-                  fontSize="xs">
-                  Title
-                </Text>
-                <Text
-                  color="rgba(33,33,33,0.5)"
-                  textAlign="center"
-                  fontSize="xs">
-                  RATE
-                </Text>
-              </Animatable.View>
-            )}
-          />
-          <Heading fontFamily="aviny" m={MAIN_PADDING}>
-            Geners
-          </Heading>
-          <FlatListAnimatable
-            useNativeDriver
-            animation={{
-              0: {transform: [{translateX: -400}]},
-              1: {transform: [{translateX: 0}]},
-            }}
-            duration={1000}
-            delay={1000}
-            horizontal
-            snapToInterval={width - width / 6 + MAIN_PADDING * 2}
-            showsHorizontalScrollIndicator={false}
-            data={[1, 2, 3, 4, 5, 6]}
-            renderItem={({item, index}) => (
-              <Animatable.View
-                animation={{0: {opacity: 0}, 1: {opacity: 1}}}
-                duration={500}
-                delay={index * 300}
-                useNativeDriver>
-                <Box
-                  bg="#000"
-                  style={{
-                    width: width - width / 6,
-                    marginHorizontal: MAIN_PADDING,
-                    height: 170,
-                    borderRadius: 10,
-                  }}
-                />
-                <Text color="rgba(33,33,33,1)" textAlign="center" fontSize="lg">
-                  Title
-                </Text>
-                <Text
-                  color="rgba(33,33,33,0.5)"
-                  textAlign="center"
-                  fontSize="xs">
-                  Title
-                </Text>
-                <Text
-                  color="rgba(33,33,33,0.5)"
-                  textAlign="center"
-                  fontSize="xs">
-                  RATE
-                </Text>
-              </Animatable.View>
-            )}
-          />
-          <Heading fontFamily="aviny" m={MAIN_PADDING}>
-            Recently Viewed
-          </Heading>
-          <FlatListAnimatable
-            useNativeDriver
-            animation={{
-              0: {transform: [{translateX: -400}]},
-              1: {transform: [{translateX: 0}]},
-            }}
-            duration={1000}
-            delay={1500}
-            horizontal
-            snapToInterval={width / 2 - width / 6 + MAIN_PADDING * 2}
-            showsHorizontalScrollIndicator={false}
-            data={[1, 2, 3, 4, 5, 6]}
-            renderItem={({item, index}) => (
-              <Animatable.View
-                animation={{0: {opacity: 0}, 1: {opacity: 1}}}
-                duration={500}
-                delay={index * 300}
-                useNativeDriver>
-                <Box
-                  bg="#000"
-                  style={{
-                    width: width / 2 - width / 6,
-                    marginHorizontal: MAIN_PADDING,
-                    height: 170,
-                    borderRadius: 10,
-                  }}
-                />
-                <Text color="rgba(33,33,33,1)" textAlign="center" fontSize="lg">
-                  Title
-                </Text>
-                <Text
-                  color="rgba(33,33,33,0.5)"
-                  textAlign="center"
-                  fontSize="xs">
-                  Title
-                </Text>
-                <Text
-                  color="rgba(33,33,33,0.5)"
-                  textAlign="center"
-                  fontSize="xs">
-                  RATE
-                </Text>
-              </Animatable.View>
-            )}
-          />
-          {/* <Heading fontFamily="aviny" m={MAIN_PADDING} mb={0}>
+            <FlatListAnimatable
+              useNativeDriver
+              animation={{
+                0: {transform: [{translateX: -400}]},
+                1: {transform: [{translateX: 0}]},
+              }}
+              duration={1000}
+              delay={500}
+              horizontal
+              snapToInterval={width / 2 - width / 6 + MAIN_PADDING * 2}
+              showsHorizontalScrollIndicator={false}
+              data={data}
+              renderItem={({item, index}) => (
+                <Animatable.View
+                  animation={{0: {opacity: 0}, 1: {opacity: 1}}}
+                  duration={500}
+                  delay={index * 300}
+                  useNativeDriver>
+                  <Image
+                    resizeMode="stretch"
+                    source={{
+                      uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                    }}
+                    style={{
+                      width: width / 2 - width / 6,
+                      marginHorizontal: MAIN_PADDING,
+                      height: 170,
+                    }}
+                  />
+                  <Text
+                    alignSelf="center"
+                    width={width / 2 - width / 6}
+                    color="rgba(33,33,33,1)"
+                    textAlign="center"
+                    fontSize="lg">
+                    {item.name}
+                  </Text>
+                  <Text
+                    color="rgba(33,33,33,0.5)"
+                    textAlign="center"
+                    fontSize="xs">
+                    {item.writer}
+                  </Text>
+                  <AirbnbRating
+                    // type="star"
+                    count={5}
+                    defaultRating={item.rate}
+                    selectedColor={GREEN_COLOR}
+                    showRating={false}
+                    size={PixelRatio.get() * 5}
+                    // onFinishRating={this.ratingCompleted}
+                  />
+                </Animatable.View>
+              )}
+            />
+            <Heading fontFamily="aviny" m={MAIN_PADDING}>
+              Geners
+            </Heading>
+            <FlatListAnimatable
+              useNativeDriver
+              animation={{
+                0: {transform: [{translateX: -400}]},
+                1: {transform: [{translateX: 0}]},
+              }}
+              duration={1000}
+              delay={1000}
+              horizontal
+              snapToInterval={width - width / 6 + MAIN_PADDING * 2}
+              showsHorizontalScrollIndicator={false}
+              data={data}
+              renderItem={({item, index}) => (
+                <Animatable.View
+                  animation={{0: {opacity: 0}, 1: {opacity: 1}}}
+                  duration={500}
+                  delay={index * 300}
+                  useNativeDriver>
+                  <Box
+                    bg="#000"
+                    style={{
+                      width: width - width / 6,
+                      marginHorizontal: MAIN_PADDING,
+                      height: 170,
+                      borderRadius: 10,
+                    }}
+                  />
+                  <Text
+                    color="rgba(33,33,33,1)"
+                    textAlign="center"
+                    fontSize="lg">
+                    Title
+                  </Text>
+                  <Text
+                    color="rgba(33,33,33,0.5)"
+                    textAlign="center"
+                    fontSize="xs">
+                    Title
+                  </Text>
+                  <AirbnbRating
+                    // type="star"
+                    count={5}
+                    defaultRating={item.rate}
+                    selectedColor={GREEN_COLOR}
+                    showRating={false}
+                    size={PixelRatio.get() * 5}
+                    // onFinishRating={this.ratingCompleted}
+                  />
+                </Animatable.View>
+              )}
+            />
+            <Heading fontFamily="aviny" m={MAIN_PADDING}>
+              Recently Viewed
+            </Heading>
+            <FlatListAnimatable
+              useNativeDriver
+              animation={{
+                0: {transform: [{translateX: -400}]},
+                1: {transform: [{translateX: 0}]},
+              }}
+              duration={1000}
+              delay={1500}
+              horizontal
+              snapToInterval={width / 2 - width / 6 + MAIN_PADDING * 2}
+              showsHorizontalScrollIndicator={false}
+              data={data}
+              renderItem={({item, index}) => (
+                <Animatable.View
+                  animation={{0: {opacity: 0}, 1: {opacity: 1}}}
+                  duration={500}
+                  delay={index * 300}
+                  useNativeDriver>
+                  <Image
+                    resizeMode="stretch"
+                    source={{
+                      uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                    }}
+                    style={{
+                      width: width / 2 - width / 6,
+                      marginHorizontal: MAIN_PADDING,
+                      height: 170,
+                    }}
+                  />
+                  <Text
+                    width={width / 2 - width / 6}
+                    alignSelf="center"
+                    color="rgba(33,33,33,1)"
+                    textAlign="center"
+                    fontSize="lg">
+                    {item.name}
+                  </Text>
+                  <Text
+                    alignSelf="center"
+                    color="rgba(33,33,33,0.5)"
+                    textAlign="center"
+                    fontSize="xs">
+                    {item.writer}
+                  </Text>
+                  <AirbnbRating
+                    // type="star"
+                    count={5}
+                    defaultRating={item.rate}
+                    selectedColor={GREEN_COLOR}
+                    showRating={false}
+                    size={PixelRatio.get() * 5}
+                    // onFinishRating={this.ratingCompleted}
+                  />
+                </Animatable.View>
+              )}
+            />
+            {/* <Heading fontFamily="aviny" m={MAIN_PADDING} mb={0}>
             Monthly Newsletter
           </Heading>
           <Text
@@ -260,8 +304,9 @@ const HomeScreen = () => {
             Receive our monthly newsletter and receive updates on new stock,
             books and the occasional promotion.
           </Text> */}
-        </VStack>
-      </ScrollView>
+          </VStack>
+        </ScrollView>
+      )}
     </>
   );
 };
