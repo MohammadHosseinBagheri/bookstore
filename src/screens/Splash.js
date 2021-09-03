@@ -58,7 +58,7 @@ const SplashScreen = () => {
             snapToInterval={width}>
             {SPLASH_DATA.map((item, index) =>
               index !== 3 ? (
-                <Center style={{width}}>
+                <Center key={String(index)} style={{width}}>
                   <VStack>
                     <Center>
                       <Text style={styles.splashText}>{item.title}</Text>
@@ -70,7 +70,7 @@ const SplashScreen = () => {
                   </VStack>
                 </Center>
               ) : (
-                <Center style={styles.lastScreenContainer}>
+                <Center key="4" style={styles.lastScreenContainer}>
                   <Image
                     source={require('../assets/images/Group94.png')}
                     style={{
@@ -109,7 +109,9 @@ const SplashScreen = () => {
                   />
                   <Text style={styles.splashText}>{item.title}</Text>
                   <VStack alignItems="center" w={width}>
-                    <TouchableOpacity onPress={()=>registerRouteChange(navigation)} style={styles.button}>
+                    <TouchableOpacity
+                      onPress={() => registerRouteChange(navigation)}
+                      style={styles.button}>
                       <Text style={{textAlign: 'center', color: '#fff'}}>
                         SIGN UP
                       </Text>
