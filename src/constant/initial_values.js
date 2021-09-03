@@ -1,5 +1,5 @@
 export const SIGNIN_INITIAL_VALUES = {
-  email: '',
+  phone: '',
   password: '',
   specialCode: '',
   stay: false,
