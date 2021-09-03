@@ -19,12 +19,37 @@ import {SIGNIN_INITIAL_VALUES} from '../../constant/initial_values';
 import {SIGNIN_VALIDATION} from '../../constant/schema';
 import {GREEN_COLOR, MAIN_PADDING} from '../../constant/styles';
 import {goBackRouting} from '../../utils/auth/signin';
+import {userLogin} from '../../apis/';
+import {Toast} from 'toastify-react-native';
+import {getData, saveData} from '../../helper/common';
+import * as screens from '../../constant/routes';
+
 const SigninScreen = () => {
   const navigation = useNavigation();
   const formik = useFormik({
     initialValues: SIGNIN_INITIAL_VALUES,
     validationSchema: SIGNIN_VALIDATION,
-    onSubmit: values => console.log(values),
+    onSubmit: async values => {
+      const {data, status} = await userLogin(values);
+      if (status === 200) {
+        await Toast.success('you are logged in');
+        await saveData(data, 'jwt').then(() => {
+          navigation.replace(screens.HOME_SCREEN);
+        });
+      }
+      if (status === 400) {
+        return Toast.error('check your fields');
+      }
+      if (status === 401) {
+        return Toast.error('username or password incorrect');
+      }
+      if (status === 404) {
+        return Toast.error('first register');
+      }
+      if (status === 500) {
+        return Toast.error('internal error');
+      }
+    },
   });
   return (
     <>
@@ -53,16 +78,16 @@ const SigninScreen = () => {
             </Box>
             <Box mt={5}>
               <Input
-                onChangeText={e => formik.setFieldValue('email', e)}
+                onChangeText={e => formik.setFieldValue('phone', e)}
                 fontSize={20}
                 fontFamily="aviny"
                 bg="#EFEFEF"
                 alignItems="center"
                 style={styles.input}
                 placeholderTextColor="#000"
-                placeholder="Email"
+                placeholder="Phone"
               />
-              <Text style={{color: 'red'}}>{formik.errors.email}</Text>
+              <Text style={{color: 'red'}}>{formik.errors.phone}</Text>
             </Box>
             <Box mt={5}>
               <Input
