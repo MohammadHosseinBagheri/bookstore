@@ -8,7 +8,7 @@ import {
   VStack,
   Text,
 } from 'native-base';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -22,21 +22,29 @@ import {GREEN_COLOR, MAIN_PADDING} from '../constant/styles';
 import * as Animatable from 'react-native-animatable';
 import {useGetAllBooks} from '../react-query/useGetAllBooks';
 import {AirbnbRating, Rating} from 'react-native-ratings';
-import { useNavigation } from '@react-navigation/core';
+import {useNavigation} from '@react-navigation/core';
+import Loading from '../components/common/Loading';
+import CustomDrawer from '../components/common/Drawer';
+import {useGetUserInfo} from '../react-query/useGetUserInfo';
 const FlatListAnimatable = Animatable.createAnimatableComponent(FlatList);
 const {width} = Dimensions.get('screen');
 const HomeScreen = () => {
   const [selectIndex, setSelectedIndex] = useState(1);
+  const [isShowDrawer, setShowDrawer] = useState(false);
+  const userInfo = useGetUserInfo();
   const {data, isLoading, isFetching, isError, isSuccess} = useGetAllBooks();
-  const navigation=useNavigation();
+  const navigation = useNavigation();
   return (
     <>
       <StatusBar backgroundColor={GREEN_COLOR} />
-      {(isLoading || isFetching) && <Text>loading</Text>}
+      {isLoading && <Loading />}
       {isSuccess && (
         <ScrollView
           contentContainerStyle={styles.container}
           style={styles.container}>
+          {isShowDrawer && (
+            <CustomDrawer setDrawerShow={setShowDrawer} userInfo={userInfo} />
+          )}
           <View style={styles.circleHeader} />
           <VStack pb={MAIN_PADDING * 2}>
             <HStack
@@ -49,7 +57,7 @@ const HomeScreen = () => {
                 Our Top Picks
               </Heading>
               <TouchableOpacity
-              onPress={()=>navigation.openDrawer()}
+                onPress={() => setShowDrawer(true)}
                 style={{
                   zIndex: 15,
                   justifyContent: 'center',
@@ -86,18 +94,20 @@ const HomeScreen = () => {
                   duration={500}
                   delay={index * 300}
                   useNativeDriver>
-                  <Image
-                    resizeMode="stretch"
-                    source={{
-                      uri: `https://www.imohammadhossein.ir${item.picPath}`,
-                    }}
-                    style={{
-                      width: width / 3 - width / 12,
-                      marginHorizontal: width / 24,
-                      height: 130,
-                      transform: [{scale: selectIndex === index ? 1 : 0.8}],
-                    }}
-                  />
+                  <TouchableOpacity>
+                    <Image
+                      resizeMode="stretch"
+                      source={{
+                        uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                      }}
+                      style={{
+                        width: width / 3 - width / 12,
+                        marginHorizontal: width / 24,
+                        height: 130,
+                        transform: [{scale: selectIndex === index ? 1 : 0.8}],
+                      }}
+                    />
+                  </TouchableOpacity>
                   <Box
                     width={width / 3 - width / 12}
                     justifyContent="center"
@@ -143,17 +153,19 @@ const HomeScreen = () => {
                   duration={500}
                   delay={index * 300}
                   useNativeDriver>
-                  <Image
-                    resizeMode="stretch"
-                    source={{
-                      uri: `https://www.imohammadhossein.ir${item.picPath}`,
-                    }}
-                    style={{
-                      width: width / 2 - width / 6,
-                      marginHorizontal: MAIN_PADDING,
-                      height: 170,
-                    }}
-                  />
+                  <TouchableOpacity>
+                    <Image
+                      resizeMode="stretch"
+                      source={{
+                        uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                      }}
+                      style={{
+                        width: width / 2 - width / 6,
+                        marginHorizontal: MAIN_PADDING,
+                        height: 170,
+                      }}
+                    />
+                  </TouchableOpacity>
                   <Text
                     alignSelf="center"
                     width={width / 2 - width / 6}
@@ -255,17 +267,19 @@ const HomeScreen = () => {
                   duration={500}
                   delay={index * 300}
                   useNativeDriver>
-                  <Image
-                    resizeMode="stretch"
-                    source={{
-                      uri: `https://www.imohammadhossein.ir${item.picPath}`,
-                    }}
-                    style={{
-                      width: width / 2 - width / 6,
-                      marginHorizontal: MAIN_PADDING,
-                      height: 170,
-                    }}
-                  />
+                  <TouchableOpacity>
+                    <Image
+                      resizeMode="stretch"
+                      source={{
+                        uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                      }}
+                      style={{
+                        width: width / 2 - width / 6,
+                        marginHorizontal: MAIN_PADDING,
+                        height: 170,
+                      }}
+                    />
+                  </TouchableOpacity>
                   <Text
                     width={width / 2 - width / 6}
                     alignSelf="center"
