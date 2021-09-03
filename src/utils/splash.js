@@ -1,8 +1,9 @@
 import * as screens from '../constant/routes';
 
 export const loginRouteChange = navigation => {
-  return navigation.push(screens.LOGIN_SCREEN);
+  console.log(navigation);
+  return navigation.navigate(screens.LOGIN_SCREEN);
 };
 export const registerRouteChange = navigation => {
-  return navigation.push(screens.REGISTER_SCREEN);
+  return navigation.navigate(screens.REGISTER_SCREEN);
 };
