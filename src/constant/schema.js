@@ -14,5 +14,5 @@ export const REGISTRATION_VALIDATION = Yup.object({
   phone: Yup.string()
     .required('required')
     .matches(/^\d+$/, 'invalid phone')
-    .length(10, 'phone number is 10 characters'),
+    .length(11, 'phone number is 11 characters'),
 });
