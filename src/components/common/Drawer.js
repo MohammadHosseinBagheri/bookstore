@@ -21,7 +21,6 @@ const CustomDrawer = props => {
     setDrawerShow,
     userInfo: {data},
   } = props;
-  console.log(data);
   return (
     <VStackAnimatable
       animation={animation}
