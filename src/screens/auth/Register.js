@@ -17,12 +17,34 @@ import {goBackRouting} from '../../utils/auth/register';
 import {useFormik} from 'formik';
 import {REGISTER_INITIAL_VALUES} from '../../constant/initial_values';
 import {REGISTRATION_VALIDATION} from '../../constant/schema';
+import {userRegister} from '../../apis';
+import {saveData} from '../../helper/common';
+import * as screens from '../../constant/routes';
+import {Toast} from 'toastify-react-native';
+
 const RegisterScreen = () => {
   const navigation = useNavigation();
   const formik = useFormik({
     initialValues: REGISTER_INITIAL_VALUES,
     validationSchema: REGISTRATION_VALIDATION,
-    onSubmit: values => console.log(values),
+    onSubmit: async values => {
+      const {data, status, message} = await userRegister(values);
+      if (status === 201) {
+        await Toast.success('successful');
+        await saveData(data, 'jwt').then(() => {
+          navigation.replace(screens.HOME_SCREEN);
+        });
+      }
+      if (status === 400) {
+        return Toast.error(message);
+      }
+      if (status === 409) {
+        return Toast.error(message);
+      }
+      if (status === 500) {
+        return Toast.error(message);
+      }
+    },
   });
   return (
     <>
