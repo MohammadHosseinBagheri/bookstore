@@ -12,14 +12,12 @@ import RegisterScreen from './auth/Register';
 import HomeScreen from './Home';
 import CustomDrawer from '../components/common/Drawer';
 import {useIsAuthState} from '../context/useIsLoggedIn';
-import { removeData } from '../helper/common';
+import {removeData} from '../helper/common';
 const Stack = createNativeStackNavigator();
 // const Drawer = createDrawerNavigator();
 const MainStack = () => {
   const isLoggedIn = useIsAuthState();
-  useEffect(() => {
-    console.log(isLoggedIn);
-  }, [isLoggedIn]);
+  useEffect(() => {}, [isLoggedIn]);
   if (isLoggedIn) {
     return (
       <Stack.Navigator
