@@ -21,11 +21,14 @@ import {
 import {GREEN_COLOR, MAIN_PADDING} from '../constant/styles';
 import * as Animatable from 'react-native-animatable';
 import {useGetAllBooks} from '../react-query/useGetAllBooks';
-import {AirbnbRating, Rating} from 'react-native-ratings';
+import {AirbnbRating} from 'react-native-ratings';
 import {useNavigation} from '@react-navigation/core';
 import Loading from '../components/common/Loading';
 import CustomDrawer from '../components/common/Drawer';
 import {useGetUserInfo} from '../react-query/useGetUserInfo';
+import {handleNavigateDetail} from '../utils/home';
+import {SharedElement} from 'react-navigation-shared-element';
+
 const FlatListAnimatable = Animatable.createAnimatableComponent(FlatList);
 const {width} = Dimensions.get('screen');
 const HomeScreen = () => {
@@ -94,19 +97,24 @@ const HomeScreen = () => {
                   duration={500}
                   delay={index * 300}
                   useNativeDriver>
-                  <TouchableOpacity>
-                    <Image
-                      resizeMode="stretch"
-                      source={{
-                        uri: `https://www.imohammadhossein.ir${item.picPath}`,
-                      }}
-                      style={{
-                        width: width / 3 - width / 12,
-                        marginHorizontal: width / 24,
-                        height: 130,
-                        transform: [{scale: selectIndex === index ? 1 : 0.8}],
-                      }}
-                    />
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleNavigateDetail(navigation, item);
+                    }}>
+                    <SharedElement id={`book-image${item._id}`}>
+                      <Image
+                        resizeMode="stretch"
+                        source={{
+                          uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                        }}
+                        style={{
+                          width: width / 3 - width / 12,
+                          marginHorizontal: width / 24,
+                          height: 130,
+                          transform: [{scale: selectIndex === index ? 1 : 0.8}],
+                        }}
+                      />
+                    </SharedElement>
                   </TouchableOpacity>
                   <Box
                     width={width / 3 - width / 12}
