@@ -120,23 +120,27 @@ const HomeScreen = () => {
                     width={width / 3 - width / 12}
                     justifyContent="center"
                     alignItems="center">
-                    <Heading
-                      fontFamily="aviny"
-                      fontSize={selectIndex === index ? 25 : 18}>
-                      {item.name}
-                    </Heading>
+                    <SharedElement id={`book-name${item._id}`}>
+                      <Heading
+                        fontFamily="aviny"
+                        fontSize={selectIndex === index ? 25 : 18}>
+                        {item.name}
+                      </Heading>
+                    </SharedElement>
                   </Box>
-                  <Text
-                    fontFamily="aviny"
-                    fontSize={selectIndex === index ? 20 : 16}
-                    textAlign="center"
-                    color={
-                      selectIndex === index
-                        ? 'rgba(36,33,38,0.8)'
-                        : 'rgba(36,33,38,0.5)'
-                    }>
-                    {item.writer}
-                  </Text>
+                  <SharedElement id={`book-writer${item._id}`}>
+                    <Text
+                      fontFamily="aviny"
+                      fontSize={selectIndex === index ? 20 : 16}
+                      textAlign="center"
+                      color={
+                        selectIndex === index
+                          ? 'rgba(36,33,38,0.8)'
+                          : 'rgba(36,33,38,0.5)'
+                      }>
+                      {item.writer}
+                    </Text>
+                  </SharedElement>
                 </Animatable.View>
               )}
             />
