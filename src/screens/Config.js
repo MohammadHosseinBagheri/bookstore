@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import React, {useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, StackActions} from '@react-navigation/native';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
 // import {createDrawerNavigator} from '@react-navigation/drawer';
 
@@ -10,8 +10,7 @@ import SigninScreen from './auth/Signin';
 import RegisterScreen from './auth/Register';
 import HomeScreen from './Home';
 import CustomDrawer from '../components/common/Drawer';
-import {useIsAuthState} from '../context/useIsLoggedIn';
-import {removeData} from '../helper/common';
+import {useIsAuthState, useIsAuthDispatch} from '../context/useIsLoggedIn';
 import {enableScreens} from 'react-native-screens';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import BookDetailScreen from './BookDetail';
@@ -24,7 +23,6 @@ const MainStack = () => {
   if (isLoggedIn) {
     return (
       <Stack.Navigator
-        initialRouteName={screens.HOME_SCREEN}
         screenOptions={{
           headerShown: false,
         }}>
@@ -48,28 +46,39 @@ const MainStack = () => {
         />
       </Stack.Navigator>
     );
+  } else {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <Stack.Screen component={SplashScreen} name={screens.SPLASH_SCREEN} />
+        <Stack.Screen component={HomeScreen} name={screens.HOME_SCREEN} />
+        <Stack.Screen component={SigninScreen} name={screens.LOGIN_SCREEN} />
+        <Stack.Screen
+          component={RegisterScreen}
+          name={screens.REGISTER_SCREEN}
+        />
+      </Stack.Navigator>
+    );
   }
-  return (
-    <Stack.Navigator
-      initialRouteName={
-        isLoggedIn ? screens.HOME_SCREEN : screens.SPLASH_SCREEN
-      }
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <Stack.Screen component={HomeScreen} name={screens.HOME_SCREEN} />
-
-      <Stack.Screen component={SplashScreen} name={screens.SPLASH_SCREEN} />
-      <Stack.Screen component={SigninScreen} name={screens.LOGIN_SCREEN} />
-      <Stack.Screen component={RegisterScreen} name={screens.REGISTER_SCREEN} />
-    </Stack.Navigator>
-  );
 };
 
-const ConfigRoutes = () => (
-  <NavigationContainer>
-    <MainStack />
-  </NavigationContainer>
-);
-
+let navigationRef = React.createRef();
+export const replace = (routeName, ...params) => {
+  navigationRef.current?.element?.dispatch(
+    StackActions.replace(routeName, ...params),
+  );
+};
+const ConfigRoutes = () => {
+  const setIsAuth = useIsAuthDispatch();
+  return (
+    <NavigationContainer
+      ref={element => {
+        navigationRef.current = {element, setIsAuth};
+      }}>
+      <MainStack />
+    </NavigationContainer>
+  );
+};
 export default ConfigRoutes;

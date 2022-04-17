@@ -1,19 +1,25 @@
 import axios from 'axios';
 import {getData} from '../helper/common';
 import Config from 'react-native-config';
+import {httpRequest} from './main';
 
 export const getAllBooks = async () => {
-  const {data} = await axios.get(
-    `https://teabook-server.herokuapp.com/api/book/get`,
-  );
-  const result = await data.data;
-  return result;
+  const {data, status, message} = await httpRequest({
+    body: {},
+    url: '/api/book/get',
+    method: 'GET',
+    authorization: false,
+    headers: {},
+    isReactQuery: true,
+  });
+  console.log({data});
+  return data;
 };
 
 export const userLogin = async values => {
   try {
     const _res = await axios.post(
-      `https://teabook-server.herokuapp.com/api/auth/login`,
+      `http://10.0.2.2:4000/api/auth/login`,
       values,
       {
         headers: {
@@ -43,22 +49,15 @@ export const userLogin = async values => {
 };
 
 export const getUserInfo = async () => {
-  try {
-    const {accessToken} = await getData('jwt');
-    const {data} = await axios.post(
-      `https://teabook-server.herokuapp.com/api/auth/user/info`,
-      null,
-      {
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-    const userInfo = await data.data;
-    return userInfo;
-  } catch (e) {
-    throw new Error(e);
-  }
+  const {data, status, message} = await httpRequest({
+    body: {},
+    url: '/api/auth/user/info',
+    method: 'POST',
+    authorization: true,
+    headers: {},
+    isReactQuery: true,
+  });
+  return data;
 };
 export const userRegister = async values => {
   try {

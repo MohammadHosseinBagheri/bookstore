@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -9,52 +10,93 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import {Box, HStack, VStack, Text} from 'native-base';
+import {Box, HStack, VStack, Text, Button} from 'native-base';
 import {SharedElement} from 'react-navigation-shared-element';
 import {AirbnbRating} from 'react-native-ratings';
 import {GREEN_COLOR, MAIN_PADDING} from '../constant/styles';
-import {alignItems} from 'styled-system';
-const {height, width} = Dimensions.get('screen');
+import RenderHtml from 'react-native-render-html';
+import LinearGradient from 'react-native-linear-gradient';
+import debounce from 'lodash/debounce';
+import {useEditBook} from '../react-query/useGetAllBooks';
+
+const {height, width} = Dimensions.get('window');
+
 const BookDetailScreen = props => {
   const {
     route: {params},
   } = props;
-  console.log('data?._id', params);
+  const [isFree] = React.useState(() => params.price === 0);
+  const [progressPercent, setPercent] = React.useState(0);
+  const [read, setRead] = React.useState(false);
+  const {mutate} = useEditBook();
+
+  // console.log('data?._id', params);
+  const scrollerRef = useRef(null);
+
+  const calculateProgress = e => {
+    const percent = Math.abs(
+      Math.round(
+        (e.nativeEvent.contentOffset.y /
+          (e.nativeEvent.contentSize.height -
+            e.nativeEvent.layoutMeasurement.height)) *
+          100,
+      ),
+    );
+    if (percent === 100) {
+      mutate({_id: params._id, percent});
+    }
+    setPercent(percent);
+  };
+  const handleProgress = React.useCallback(e => {
+    calculateProgress(e);
+  }, []);
+  console.log('progressPercent', progressPercent);
   return (
-    <View style={styles.container}>
+    <ScrollView
+      stickyHeaderIndices={[1]}
+      onLayout={e => console.log(e.nativeEvent.layout.height)}
+      onContentSizeChange={(w, h) => console.log({w, h})}
+      onScroll={handleProgress}
+      ref={scrollerRef}
+      scrollEnabled={read}>
       <SharedElement id={`book-image${params?._id}`}>
-        <ImageBackground
-          resizeMode="stretch"
-          source={{uri: `https://www.imohammadhossein.ir${params?.picPath}`}}
-          style={[{height: 250}]}>
-          <VStack padding={MAIN_PADDING}>
-            <SharedElement id={`book-name${params?._id}`}>
-              <Text>{params.name}</Text>
-            </SharedElement>
-            <SharedElement id={`book-writer${params?._id}`}>
-              <Text>{params.writer}</Text>
-            </SharedElement>
-          </VStack>
-          <Box
-            style={[
-              StyleSheet.absoluteFillObject,
-              {backgroundColor: 'rgba(0,0,0,0.5)'},
-            ]}
-          />
-        </ImageBackground>
+        <LinearGradient colors={['rgba(0,0,0,0.8)', 'transparent']}>
+          <ImageBackground
+            resizeMode="stretch"
+            source={{uri: `${params?.picPath}`}}
+            style={[{height: 250}]}>
+            <VStack padding={MAIN_PADDING}>
+              <SharedElement id={`book-name${params?._id}`}>
+                <Text>{params?.name}</Text>
+              </SharedElement>
+              <SharedElement id={`book-writer${params?._id}`}>
+                <Text>{params?.writer}</Text>
+              </SharedElement>
+            </VStack>
+          </ImageBackground>
+        </LinearGradient>
       </SharedElement>
+      <LinearGradient
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
+        style={{
+          height: 8,
+          marginTop: 2,
+          width: `${progressPercent}%`,
+        }}
+        colors={['white', GREEN_COLOR]}
+      />
       <Box
         height="auto"
         backgroundColor="#fff"
         padding={MAIN_PADDING}
         margin={MAIN_PADDING / 2}
         justifyContent="center"
-        borderRadius={8}
-        style={{elevation: 1}}>
+        borderRadius={8}>
         <HStack justifyContent="space-between">
           <VStack justifyContent="center" alignItems="center">
             <Text textAlign="center" color="#9E9E9E">
-              Rate
+              رتبه
             </Text>
             <AirbnbRating
               count={5}
@@ -66,46 +108,51 @@ const BookDetailScreen = props => {
           </VStack>
           <VStack justifyContent="center" alignItems="center">
             <Text textAlign="center" color="#9E9E9E">
-              Price
+              قیمت
             </Text>
-            <Text color={GREEN_COLOR}>$25</Text>
+            <Text color={GREEN_COLOR}>
+              {isFree ? 'رایگان' : params?.price + ' تومان'}
+            </Text>
           </VStack>
           <VStack justifyContent="center" alignItems="center">
             <Text textAlign="center" color="#9E9E9E">
-              Buyers
+              تعداد خوانندگان
             </Text>
-            <Text color={GREEN_COLOR}>+250</Text>
+            <Text color={GREEN_COLOR}>{params?.boughtCount}</Text>
           </VStack>
         </HStack>
       </Box>
-      <ScrollView minimumZoomScale={1} maximumZoomScale={1.2} contentContainerStyle={{padding: MAIN_PADDING}}>
-        <Text>
-          Where does it come from? Contrary to popular belief, Lorem Ipsum is
-          not simply random text. It has roots in a piece of classical Latin
-          literature from 45 BC, making it over 2000 years old. Richard
-          McClintock, a Latin professor at Hampden-Sydney College in Virginia,
-          looked up one of the more obscure Latin words, consectetur, from a
-          Lorem Ipsum passage, and going through the cites of the word in
-          classical literature, discovered the undoubtable source. Lorem Ipsum
-          comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et
-          Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC.
-          This book is a treatise on the theory of ethics, very popular during
-          the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit
-          amet..", comes from a line in section 1.10.32. There are many
-          variations of passages of Lorem Ipsum available, but the majority have
-          suffered alteration in some form, by injected humour, or randomised
-          words which don't look even slightly believable. If you are going to
-          use a passage of Lorem Ipsum, you need to be sure there isn't anything
-          embarrassing hidden in the middle of text. All the Lorem Ipsum
-          generators on the Internet tend to repeat predefined chunks as
-          necessary, making this the first true generator on the Internet. It
-          uses a dictionary of over 200 Latin words, combined with a handful of
-          model sentence structures, to generate Lorem Ipsum which looks
-          reasonable. The generated Lorem Ipsum is therefore always free from
-          repetition, injected humour, or non-characteristic words etc.
-        </Text>
-      </ScrollView>
-    </View>
+      <HStack justifyContent="space-around">
+        <Button
+          onPress={() => {
+            scrollerRef.current.scrollTo({x: 0, y: 0, animated: true}),
+              setRead(prev => !prev);
+          }}>
+          salam
+        </Button>
+        {isFree && <Button>پیش نمایش</Button>}
+      </HStack>
+      <VStack position="relative">
+        {!read && (
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 0, y: 1}}
+            colors={['rgba(255,255,255,0)', 'rgba(255,255,255,1)']}
+            style={{
+              flex: 1,
+              zIndex: 1,
+              position: 'absolute',
+              top: 0,
+              height: height / 2,
+              width: '100%',
+            }}
+          />
+        )}
+        <Box padding={MAIN_PADDING}>
+          <RenderHtml contentWidth={width} source={{html: params?.content}} />
+        </Box>
+      </VStack>
+    </ScrollView>
   );
 };
 BookDetailScreen.sharedElements = (route, otherRoute, showing) => {

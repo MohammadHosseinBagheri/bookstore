@@ -11,16 +11,15 @@ import {
 import {GREEN_COLOR} from '../../constant/styles';
 const {width, height} = Dimensions.get('screen');
 import * as Animatable from 'react-native-animatable';
+import {useGetUserInfo} from '../../react-query/useGetUserInfo';
 const VStackAnimatable = Animatable.createAnimatableComponent(VStack);
 const animation = {
   0: {transform: [{translateX: 400}], opacity: 0},
   1: {transform: [{translateX: 0}], opacity: 1},
 };
 const CustomDrawer = props => {
-  const {
-    setDrawerShow,
-    userInfo: {data},
-  } = props;
+  const {setDrawerShow} = props;
+  const {data} = useGetUserInfo();
   return (
     <VStackAnimatable
       animation={animation}
@@ -43,7 +42,7 @@ const CustomDrawer = props => {
           }}
         />
         <Text fontFamily="aviny" fontSize={22}>
-          {data.name}
+          {data?.name}
         </Text>
       </Box>
       <TouchableOpacity>

@@ -1,3 +1,4 @@
+export const HOST = 'http://10.0.2.2:4000';
 export const SPLASH_DATA = [
   {
     title: 'Discounted Secondhand Books',
@@ -15,9 +16,9 @@ export const SPLASH_DATA = [
       "If you're looking to downsize, sell or recycle old books, the Book Grocer can help.",
     image: require('../assets/images/undraw_collecting_fjjl.png'),
   },
-    {
-      title: 'Books For Every Taste.',
-      description: '',
+  {
+    title: 'Books For Every Taste.',
+    description: '',
     //   image: require('',
-    },
+  },
 ];

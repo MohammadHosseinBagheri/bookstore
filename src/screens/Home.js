@@ -34,9 +34,9 @@ const {width} = Dimensions.get('screen');
 const HomeScreen = () => {
   const [selectIndex, setSelectedIndex] = useState(1);
   const [isShowDrawer, setShowDrawer] = useState(false);
-  const userInfo = useGetUserInfo();
-  const {data, isLoading, isFetching, isError, isSuccess} = useGetAllBooks();
   const navigation = useNavigation();
+  const {data, isLoading, isFetching, isError, isSuccess} = useGetAllBooks();
+  console.log({data})
   return (
     <>
       <StatusBar backgroundColor={GREEN_COLOR} />
@@ -46,7 +46,7 @@ const HomeScreen = () => {
           contentContainerStyle={styles.container}
           style={styles.container}>
           {isShowDrawer && (
-            <CustomDrawer setDrawerShow={setShowDrawer} userInfo={userInfo} />
+            <CustomDrawer setDrawerShow={setShowDrawer} />
           )}
           <View style={styles.circleHeader} />
           <VStack pb={MAIN_PADDING * 2}>

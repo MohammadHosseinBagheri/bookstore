@@ -1,17 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/react-in-jsx-scope */
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {getData} from '../helper/common';
+import {useGetUserInfo} from '../react-query/useGetUserInfo';
 
 export const IsAuthState = createContext();
 export const IsAuthDsipatch = createContext();
 
 const IsAuthProvider = ({children}) => {
   const [state, dispatch] = useState();
+  const {isSuccess,isLoading} = useGetUserInfo();
   useEffect(() => {
     const getJwtData = async () => {
-      dispatch(await getData('jwt'));
+      if (isSuccess) {
+        dispatch(await getData('jwt'));
+      }
     };
-    getJwtData();
+    getJwtData()
   }, []);
   return (
     <IsAuthState.Provider value={state}>
