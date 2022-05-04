@@ -35,8 +35,13 @@ const HomeScreen = () => {
   const [selectIndex, setSelectedIndex] = useState(1);
   const [isShowDrawer, setShowDrawer] = useState(false);
   const navigation = useNavigation();
-  const {data, isLoading, isFetching, isError, isSuccess} = useGetAllBooks();
-  console.log({data})
+  const {
+    data: {data, recentlyReadedBook},
+    isLoading,
+    isFetching,
+    isError,
+    isSuccess,
+  } = useGetAllBooks();
   return (
     <>
       <StatusBar backgroundColor={GREEN_COLOR} />
@@ -45,9 +50,7 @@ const HomeScreen = () => {
         <ScrollView
           contentContainerStyle={styles.container}
           style={styles.container}>
-          {isShowDrawer && (
-            <CustomDrawer setDrawerShow={setShowDrawer} />
-          )}
+          {isShowDrawer && <CustomDrawer setDrawerShow={setShowDrawer} />}
           <View style={styles.circleHeader} />
           <VStack pb={MAIN_PADDING * 2}>
             <HStack
@@ -272,7 +275,7 @@ const HomeScreen = () => {
               horizontal
               snapToInterval={width / 2 - width / 6 + MAIN_PADDING * 2}
               showsHorizontalScrollIndicator={false}
-              data={data}
+              data={recentlyReadedBook}
               renderItem={({item, index}) => (
                 <Animatable.View
                   animation={{0: {opacity: 0}, 1: {opacity: 1}}}
@@ -283,7 +286,7 @@ const HomeScreen = () => {
                     <Image
                       resizeMode="stretch"
                       source={{
-                        uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                        uri: item?.bookId?.picPath,
                       }}
                       style={{
                         width: width / 2 - width / 6,
@@ -308,28 +311,15 @@ const HomeScreen = () => {
                     {item.writer}
                   </Text>
                   <AirbnbRating
-                    // type="star"
                     count={5}
-                    defaultRating={item.rate}
+                    defaultRating={item?.bookId?.rate / item?.bookId?.rateCount}
                     selectedColor={GREEN_COLOR}
                     showRating={false}
                     size={PixelRatio.get() * 5}
-                    // onFinishRating={this.ratingCompleted}
                   />
                 </Animatable.View>
               )}
             />
-            {/* <Heading fontFamily="aviny" m={MAIN_PADDING} mb={0}>
-            Monthly Newsletter
-          </Heading>
-          <Text
-            fontFamily="aviny"
-            color="rgba(33,33,33,0.5)"
-            m={MAIN_PADDING}
-            mt={0}>
-            Receive our monthly newsletter and receive updates on new stock,
-            books and the occasional promotion.
-          </Text> */}
           </VStack>
         </ScrollView>
       )}

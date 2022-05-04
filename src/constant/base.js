@@ -1,3 +1,5 @@
+import {Dimensions} from 'react-native';
+
 export const HOST = 'http://10.0.2.2:4000';
 export const SPLASH_DATA = [
   {
@@ -22,3 +24,12 @@ export const SPLASH_DATA = [
     //   image: require('',
   },
 ];
+
+const {width} = Dimensions.get('window');
+export const ToastConfig = {
+  duration: 3000,
+  variant: 'subtle',
+  isClosable: false,
+  width,
+  justifyContent: 'space-between',
+};

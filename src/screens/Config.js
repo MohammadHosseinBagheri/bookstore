@@ -59,6 +59,23 @@ const MainStack = () => {
           component={RegisterScreen}
           name={screens.REGISTER_SCREEN}
         />
+        <Stack.Screen
+          component={BookDetailScreen}
+          name={screens.DETAIL_SCREEN}
+          options={() => ({
+            headerShown: false,
+            gestureEnabled: false,
+            transitionSpec: {
+              open: {animation: 'timing', config: {duration: 1000}},
+              close: {animation: 'timing', config: {duration: 1000}},
+            },
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          })}
+        />
       </Stack.Navigator>
     );
   }

@@ -4,15 +4,14 @@ import Config from 'react-native-config';
 import {httpRequest} from './main';
 
 export const getAllBooks = async () => {
-  const {data, status, message} = await httpRequest({
+  const data = await httpRequest({
     body: {},
     url: '/api/book/get',
     method: 'GET',
-    authorization: false,
+    authorization: true,
     headers: {},
     isReactQuery: true,
   });
-  console.log({data});
   return data;
 };
 

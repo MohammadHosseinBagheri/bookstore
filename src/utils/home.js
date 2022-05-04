@@ -1,5 +1,7 @@
 import * as screens from '../constant/routes';
-const handleRating = () => {};
+import {StackActions} from '@react-navigation/native';
+
 export const handleNavigateDetail = (navigation, data) => {
-  return navigation.push(screens.DETAIL_SCREEN, data);
+  console.log('salam', navigation);
+  return navigation.dispatch(StackActions.push(screens.DETAIL_SCREEN, data));
 };

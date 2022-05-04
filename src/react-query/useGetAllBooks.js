@@ -1,29 +1,34 @@
+import {Toast} from 'native-base';
+import {useWindowDimensions} from 'react-native';
 import {useQuery, useMutation} from 'react-query';
 import {getAllBooks} from '../apis';
 import {httpRequest} from '../apis/main';
+import {ToastConfig} from '../constant/base';
 export const useGetAllBooks = () => {
   return useQuery('books', getAllBooks);
 };
 const postEditBookAPI = async args => {
   const {_id, ...other} = args;
-  const formData = new FormData();
-  Object.entries(other).forEach(([key, value]) => {
-    formData.append(key, value);
-  });
   const {data, status, message} = await httpRequest({
-    body: formData,
+    body: JSON.stringify(other),
     method: 'PUT',
-    url: `/api/book/${_id}`,
+    url: `/api/auth/user-book-detail/${_id}`,
     isReactQuery: false,
     headers: {},
     authorization: true,
   });
   console.log({data, status, message});
 };
-export const useEditBook = () => {
-  return useMutation(postEditBookAPI,{
-    onSuccess: async (data, variables) => {
-      console.log({data, variables});
-    }
+
+export const useEditBook = bookName => {
+  const {width} = useWindowDimensions();
+  return useMutation(postEditBookAPI, {
+    onSuccess: async () => {
+      await Toast.show({
+        description: `شما کتاب ${bookName} را خواندید`,
+        status: 'success',
+        ...ToastConfig,
+      });
+    },
   });
 };
