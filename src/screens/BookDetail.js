@@ -25,6 +25,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {calculateRate} from '../utils/bookDetail';
 import {httpRequest} from '../apis/main';
 import {useEditSingleBook} from '../react-query/useEditBook';
+import {useCallback} from 'react';
 
 const {height, width} = Dimensions.get('window');
 
@@ -32,15 +33,16 @@ const BookDetailScreen = props => {
   const {
     route: {params},
   } = props;
+  console.log({props});
   const {data, isLoading} = useGetSingleBook(params?._id);
-  const [isFree] = React.useState(() => params.price === '0');
+  const [isFree] = React.useState(() => params?.price === '0');
   const [isShowBadge, setShowBadge] = React.useState(false);
   const [progressPercent, setPercent] = React.useState(0);
   const [read, setRead] = React.useState(false);
   const {mutate} = useEditBook(params?.name);
   const {mutate: mutateBook} = useEditSingleBook(params?._id);
 
-  console.log({test:data?.data?.bookDetail?.percent});
+  console.log({test: data?.data?.bookDetail?.percent});
   const scrollerRef = useRef(null);
 
   const calculateProgress = e => {
@@ -65,14 +67,16 @@ const BookDetailScreen = props => {
     if (data?.data?.bookDetail?.percent) {
       setShowBadge(true);
     }
-  }, [data?.data?.bookDetail?.percent]);
-  useFocusEffect(() => {
-    return () => {
-      if (data?.data?.bookDetail?.percent !== 100) {
-        mutate({_id: params._id, progressPercent});
-      }
-    };
-  });
+  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        if (data?.data?.bookDetail?.percent !== 100) {
+          mutate({_id: params?._id, progressPercent});
+        }
+      };
+    }, []),
+  );
 
   return (
     <ScrollView

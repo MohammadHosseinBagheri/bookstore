@@ -14,6 +14,8 @@ import {useIsAuthState, useIsAuthDispatch} from '../context/useIsLoggedIn';
 import {enableScreens} from 'react-native-screens';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import BookDetailScreen from './BookDetail';
+import Universities from './Universities';
+import DetailUniversity from './DetailUniversity';
 enableScreens();
 const Stack = createSharedElementStackNavigator();
 // const Drawer = createDrawerNavigator();
@@ -27,6 +29,14 @@ const MainStack = () => {
           headerShown: false,
         }}>
         <Stack.Screen component={HomeScreen} name={screens.HOME_SCREEN} />
+        <Stack.Screen
+          component={Universities}
+          name={screens.UNIVERSITIES_SCREEN}
+        />
+        <Stack.Screen
+          component={DetailUniversity}
+          name={screens.DETAIL_UNIVERSITY}
+        />
         <Stack.Screen
           component={BookDetailScreen}
           name={screens.DETAIL_SCREEN}
@@ -60,6 +70,14 @@ const MainStack = () => {
           name={screens.REGISTER_SCREEN}
         />
         <Stack.Screen
+          component={Universities}
+          name={screens.UNIVERSITIES_SCREEN}
+        />
+        <Stack.Screen
+          component={DetailUniversity}
+          name={screens.DETAIL_UNIVERSITY}
+        />
+        <Stack.Screen
           component={BookDetailScreen}
           name={screens.DETAIL_SCREEN}
           options={() => ({
@@ -86,6 +104,9 @@ export const replace = (routeName, ...params) => {
   navigationRef.current?.element?.dispatch(
     StackActions.replace(routeName, ...params),
   );
+};
+export const navigate = (name, config) => {
+  navigationRef.current?.element?.dispatch(StackActions?.push(name, ...config));
 };
 const ConfigRoutes = () => {
   const setIsAuth = useIsAuthDispatch();

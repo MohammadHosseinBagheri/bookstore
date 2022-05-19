@@ -28,6 +28,8 @@ import CustomDrawer from '../components/common/Drawer';
 import {useGetUserInfo} from '../react-query/useGetUserInfo';
 import {handleNavigateDetail} from '../utils/home';
 import {SharedElement} from 'react-navigation-shared-element';
+import {navigate} from './Config';
+import {DETAIL_SCREEN} from '../constant/routes';
 
 const FlatListAnimatable = Animatable.createAnimatableComponent(FlatList);
 const {width} = Dimensions.get('screen');
@@ -35,13 +37,7 @@ const HomeScreen = () => {
   const [selectIndex, setSelectedIndex] = useState(1);
   const [isShowDrawer, setShowDrawer] = useState(false);
   const navigation = useNavigation();
-  const {
-    data: {data, recentlyReadedBook},
-    isLoading,
-    isFetching,
-    isError,
-    isSuccess,
-  } = useGetAllBooks();
+  const {data, isLoading, isFetching, isError, isSuccess} = useGetAllBooks();
   return (
     <>
       <StatusBar backgroundColor={GREEN_COLOR} />
@@ -90,7 +86,7 @@ const HomeScreen = () => {
                 const selectedIndex = contentOffset / (width / 3 - width / 12);
                 setSelectedIndex(Math.floor(selectedIndex) + 1);
               }}
-              data={data}
+              data={data?.data}
               renderItem={({item, index}) => (
                 <Animatable.View
                   style={{
@@ -161,7 +157,7 @@ const HomeScreen = () => {
               horizontal
               snapToInterval={width / 2 - width / 6 + MAIN_PADDING * 2}
               showsHorizontalScrollIndicator={false}
-              data={data}
+              data={data?.data}
               renderItem={({item, index}) => (
                 <Animatable.View
                   animation={{0: {opacity: 0}, 1: {opacity: 1}}}
@@ -221,7 +217,7 @@ const HomeScreen = () => {
               horizontal
               snapToInterval={width - width / 6 + MAIN_PADDING * 2}
               showsHorizontalScrollIndicator={false}
-              data={data}
+              data={data?.data}
               renderItem={({item, index}) => (
                 <Animatable.View
                   animation={{0: {opacity: 0}, 1: {opacity: 1}}}
@@ -275,14 +271,18 @@ const HomeScreen = () => {
               horizontal
               snapToInterval={width / 2 - width / 6 + MAIN_PADDING * 2}
               showsHorizontalScrollIndicator={false}
-              data={recentlyReadedBook}
+              data={data?.recentlyReadedBook}
               renderItem={({item, index}) => (
                 <Animatable.View
                   animation={{0: {opacity: 0}, 1: {opacity: 1}}}
                   duration={500}
                   delay={index * 300}
                   useNativeDriver>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log(item?.bookId);
+                      navigation.navigate(DETAIL_SCREEN, item?.bookId);
+                    }}>
                     <Image
                       resizeMode="stretch"
                       source={{

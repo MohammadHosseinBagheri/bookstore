@@ -3,7 +3,11 @@ import {NativeBaseProvider, extendTheme} from 'native-base';
 const theme = extendTheme({
   components: {
     Button: {
-      // Can simply pass default props to change default behaviour of components.
+      baseStyle: {
+        fontFamily: 'aviny',
+      },
+    },
+    Heading: {
       baseStyle: {
         fontFamily: 'aviny',
       },

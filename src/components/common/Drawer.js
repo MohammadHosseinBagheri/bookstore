@@ -12,6 +12,9 @@ import {GREEN_COLOR} from '../../constant/styles';
 const {width, height} = Dimensions.get('screen');
 import * as Animatable from 'react-native-animatable';
 import {useGetUserInfo} from '../../react-query/useGetUserInfo';
+import {navigate} from '../../screens/Config';
+import * as screen from '../../constant/routes';
+import {useNavigation} from '@react-navigation/native';
 const VStackAnimatable = Animatable.createAnimatableComponent(VStack);
 const animation = {
   0: {transform: [{translateX: 400}], opacity: 0},
@@ -20,6 +23,7 @@ const animation = {
 const CustomDrawer = props => {
   const {setDrawerShow} = props;
   const {data} = useGetUserInfo();
+  const navigation = useNavigation();
   return (
     <VStackAnimatable
       animation={animation}
@@ -60,9 +64,10 @@ const CustomDrawer = props => {
           About us
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(screen.UNIVERSITIES_SCREEN)}>
         <Text fontFamily="aviny" fontSize={25} color={GREEN_COLOR}>
-          Our Books
+          جزوات
         </Text>
       </TouchableOpacity>
       <TouchableOpacity>
