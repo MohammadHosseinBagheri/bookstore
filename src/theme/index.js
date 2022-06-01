@@ -7,6 +7,11 @@ const theme = extendTheme({
         fontFamily: 'aviny',
       },
     },
+    Select: {
+      baseStyle: {
+        fontFamily: 'aviny',
+      },
+    },
     Heading: {
       baseStyle: {
         fontFamily: 'aviny',

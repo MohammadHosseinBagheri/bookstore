@@ -16,3 +16,9 @@ export const REGISTRATION_VALIDATION = Yup.object({
     .matches(/^\d+$/, 'invalid phone')
     .length(11, 'phone number is 11 characters'),
 });
+
+export const REGISTR_UNIVERSITY_VALIDATION = Yup.object({
+  name: Yup.string().required('نام اجباری است!'),
+  province: Yup.string().required('استان اجباری است!'),
+  city: Yup.string().required('شهر اجباری است!'),
+});

@@ -3,8 +3,10 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {GREEN_COLOR} from '../../constant/styles';
 
-const Loading = () => {
-  return <Spinner color={GREEN_COLOR} style={{marginTop: '50%'}} />;
+const Loading = ({isFull = false}) => {
+  return (
+    <Spinner color={GREEN_COLOR} style={{marginTop: isFull ? '50%' : 0}} />
+  );
 };
 
 export default Loading;
