@@ -11,6 +11,7 @@ import {
   VStack,
   Text,
   ScrollView,
+  Toast,
 } from 'native-base';
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Image} from 'react-native';
@@ -20,9 +21,10 @@ import {SIGNIN_VALIDATION} from '../../constant/schema';
 import {GREEN_COLOR, MAIN_PADDING} from '../../constant/styles';
 import {goBackRouting} from '../../utils/auth/signin';
 import {userLogin} from '../../apis/';
-import {Toast} from 'toastify-react-native';
 import {getData, saveData} from '../../helper/common';
 import * as screens from '../../constant/routes';
+import {httpRequest} from '../../apis/main';
+import {ToastConfig} from '../../constant/base';
 
 const SigninScreen = () => {
   const navigation = useNavigation();
@@ -30,24 +32,51 @@ const SigninScreen = () => {
     initialValues: SIGNIN_INITIAL_VALUES,
     validationSchema: SIGNIN_VALIDATION,
     onSubmit: async values => {
-      const {data, status} = await userLogin(values);
+      const {data, status, message} = await httpRequest({
+        method: 'POST',
+        body: JSON.stringify(values),
+        headers: {},
+        isReactQuery: false,
+        url: '/api/auth/login',
+        authorization: false,
+      });
       if (status === 200) {
-        await Toast.success('you are logged in');
+        await Toast.show({
+          status: 'success',
+          title: 'شما با موفقیت وارد شدید!',
+          ...ToastConfig,
+        });
         await saveData(data, 'jwt').then(() => {
           navigation.replace(screens.HOME_SCREEN);
         });
       }
       if (status === 400) {
-        return Toast.error('check your fields');
+        await Toast.show({
+          status: 'error',
+          title: message,
+          ...ToastConfig,
+        });
       }
       if (status === 401) {
-        return Toast.error('username or password incorrect');
+        await Toast.show({
+          status: 'error',
+          title: message,
+          ...ToastConfig,
+        });
       }
       if (status === 404) {
-        return Toast.error('first register');
+        await Toast.show({
+          status: 'error',
+          title: message,
+          ...ToastConfig,
+        });
       }
       if (status === 500) {
-        return Toast.error('internal error');
+        await Toast.show({
+          status: 'error',
+          title: message,
+          ...ToastConfig,
+        });
       }
     },
   });
@@ -64,18 +93,6 @@ const SigninScreen = () => {
         <KeyboardAvoidingView behavior="height">
           <Heading fontFamily="aviny">Sign in</Heading>
           <VStack>
-            <Box mt={5}>
-              <Input
-                onChangeText={e => formik.setFieldValue('specialCode', e)}
-                fontSize={20}
-                fontFamily="aviny"
-                bg="#EFEFEF"
-                alignItems="center"
-                style={styles.input}
-                placeholderTextColor="#000"
-                placeholder="Optional Group Special Code"
-              />
-            </Box>
             <Box mt={5}>
               <Input
                 onChangeText={e => formik.setFieldValue('phone', e)}
@@ -104,7 +121,7 @@ const SigninScreen = () => {
               <Text style={{color: 'red'}}>{formik.errors.password}</Text>
             </Box>
             <HStack justifyContent="space-between">
-              <HStack alignItems="center">
+              {/* <HStack alignItems="center">
                 <Checkbox
                   mr={3}
                   isChecked={formik.values.stay}
@@ -115,7 +132,7 @@ const SigninScreen = () => {
                 <Text fontFamily="aviny" fontSize={18}>
                   Stay Logged In
                 </Text>
-              </HStack>
+              </HStack> */}
               <Box alignItems="center" justifyContent="center">
                 <TouchableOpacity>
                   <Text fontFamily="aviny" fontSize={18}>

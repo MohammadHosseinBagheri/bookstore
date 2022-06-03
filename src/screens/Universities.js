@@ -62,6 +62,17 @@ const Universities = () => {
   useEffect(() => {
     cityRefetch();
   }, [formik.values.province]);
+  const [searchedData, setSearchedData] = useState([]);
+  const [search, setSearch] = useState('');
+  useEffect(() => {
+    setSearchedData(data);
+  }, [data]);
+  useEffect(() => {
+    const filtred = data?.data?.filter(item => {
+      return item?.name?.includes(search);
+    });
+    setSearchedData({data: filtred});
+  }, [search]);
   if (isLoading) {
     return <Loading />;
   }
@@ -95,9 +106,18 @@ const Universities = () => {
             name="plus"
           />
         </Button>
+        <Box padding={MAIN_PADDING}>
+          <Input
+            bg="white"
+            placeholder="جست‌و‌جو"
+            onChangeText={value => {
+              setTimeout(() => setSearch(value), 500);
+            }}
+          />
+        </Box>
         <FlatList
           numColumns={2}
-          data={data?.data}
+          data={searchedData?.data}
           renderItem={({item, index}) => (
             <Box
               fontFamily="aviny"

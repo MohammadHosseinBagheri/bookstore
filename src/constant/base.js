@@ -1,6 +1,6 @@
 import {Dimensions} from 'react-native';
 
-export const HOST = 'http://10.0.2.2:4000';
+export const HOST = 'https://teabook-server.herokuapp.com';
 export const SPLASH_DATA = [
   {
     title: 'Discounted Secondhand Books',

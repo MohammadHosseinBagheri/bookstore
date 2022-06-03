@@ -38,6 +38,7 @@ const HomeScreen = () => {
   const [isShowDrawer, setShowDrawer] = useState(false);
   const navigation = useNavigation();
   const {data, isLoading, isFetching, isError, isSuccess} = useGetAllBooks();
+  console.log({data});
   return (
     <>
       <StatusBar backgroundColor={GREEN_COLOR} />
@@ -56,7 +57,7 @@ const HomeScreen = () => {
               p={MAIN_PADDING}
               mt={MAIN_PADDING * 3}>
               <Heading fontFamily="aviny" style={{zIndex: 15, color: '#fff'}}>
-                Our Top Picks
+                جدیدترین ها
               </Heading>
               <TouchableOpacity
                 onPress={() => setShowDrawer(true)}
@@ -86,7 +87,7 @@ const HomeScreen = () => {
                 const selectedIndex = contentOffset / (width / 3 - width / 12);
                 setSelectedIndex(Math.floor(selectedIndex) + 1);
               }}
-              data={data?.data}
+              data={data?.data.slice(0, 6)}
               renderItem={({item, index}) => (
                 <Animatable.View
                   style={{
@@ -104,7 +105,7 @@ const HomeScreen = () => {
                       <Image
                         resizeMode="stretch"
                         source={{
-                          uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                          uri: item.picPath,
                         }}
                         style={{
                           width: width / 3 - width / 12,
@@ -143,8 +144,8 @@ const HomeScreen = () => {
                 </Animatable.View>
               )}
             />
-            <Heading fontFamily="aviny" m={MAIN_PADDING}>
-              Best Sellers
+            <Heading textAlign="left" fontFamily="aviny" m={MAIN_PADDING}>
+              پرطرفدار‌ترین ها
             </Heading>
             <FlatListAnimatable
               useNativeDriver
@@ -168,7 +169,7 @@ const HomeScreen = () => {
                     <Image
                       resizeMode="stretch"
                       source={{
-                        uri: `https://www.imohammadhossein.ir${item.picPath}`,
+                        uri: item?.picPath,
                       }}
                       style={{
                         width: width / 2 - width / 6,
@@ -203,7 +204,7 @@ const HomeScreen = () => {
                 </Animatable.View>
               )}
             />
-            <Heading fontFamily="aviny" m={MAIN_PADDING}>
+            {/* <Heading fontFamily="aviny" m={MAIN_PADDING}>
               Geners
             </Heading>
             <FlatListAnimatable
@@ -256,9 +257,9 @@ const HomeScreen = () => {
                   />
                 </Animatable.View>
               )}
-            />
-            <Heading fontFamily="aviny" m={MAIN_PADDING}>
-              Recently Viewed
+            /> */}
+            <Heading textAlign="left" fontFamily="aviny" m={MAIN_PADDING}>
+              اخیرا خوانده شده
             </Heading>
             <FlatListAnimatable
               useNativeDriver
@@ -280,7 +281,6 @@ const HomeScreen = () => {
                   useNativeDriver>
                   <TouchableOpacity
                     onPress={() => {
-                      console.log(item?.bookId);
                       navigation.navigate(DETAIL_SCREEN, item?.bookId);
                     }}>
                     <Image

@@ -8,6 +8,7 @@ import {
   VStack,
   Heading,
   Text,
+  Toast,
 } from 'native-base';
 import React from 'react';
 import {StyleSheet, TouchableOpacity, View, Image} from 'react-native';
@@ -20,7 +21,7 @@ import {REGISTRATION_VALIDATION} from '../../constant/schema';
 import {userRegister} from '../../apis';
 import {saveData} from '../../helper/common';
 import * as screens from '../../constant/routes';
-import {Toast} from 'toastify-react-native';
+import {ToastConfig} from '../../constant/base';
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
@@ -30,19 +31,35 @@ const RegisterScreen = () => {
     onSubmit: async values => {
       const {data, status, message} = await userRegister(values);
       if (status === 201) {
-        await Toast.success('successful');
+        await await Toast.show({
+          status: 'success',
+          title: 'شما با موفقیت ثبت‌نام شدید!',
+          ...ToastConfig,
+        });
         await saveData(data, 'jwt').then(() => {
           navigation.replace(screens.HOME_SCREEN);
         });
       }
       if (status === 400) {
-        return Toast.error(message);
+        await Toast.show({
+          status: 'error',
+          title: message,
+          ...ToastConfig,
+        });
       }
       if (status === 409) {
-        return Toast.error(message);
+        await Toast.show({
+          status: 'error',
+          title: message,
+          ...ToastConfig,
+        });
       }
       if (status === 500) {
-        return Toast.error(message);
+        await Toast.show({
+          status: 'error',
+          title: message,
+          ...ToastConfig,
+        });
       }
     },
   });
@@ -68,7 +85,7 @@ const RegisterScreen = () => {
                 bg="#EFEFEF"
                 alignItems="center"
                 placeholderTextColor="#000"
-                placeholder="First & Lastname"
+                placeholder="Fullname"
               />
               <Text style={{color: 'red'}}>{formik.errors.name}</Text>
             </Box>
@@ -97,18 +114,6 @@ const RegisterScreen = () => {
                 placeholder="Mobile Phone"
               />
               <Text style={{color: 'red'}}>{formik.errors.phone}</Text>
-            </Box>
-            <Box mt={3}>
-              <Input
-                onChangeText={e => formik.setFieldValue('specialCode', e)}
-                style={styles.input}
-                fontSize={20}
-                fontFamily="aviny"
-                bg="#EFEFEF"
-                alignItems="center"
-                placeholderTextColor="#000"
-                placeholder="Group Special Code(Optional)"
-              />
             </Box>
             <Box mt={3} mb={3}>
               <Input

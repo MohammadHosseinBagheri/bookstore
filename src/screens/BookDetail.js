@@ -26,6 +26,7 @@ import {calculateRate} from '../utils/bookDetail';
 import {httpRequest} from '../apis/main';
 import {useEditSingleBook} from '../react-query/useEditBook';
 import {useCallback} from 'react';
+import {useQueryClient} from 'react-query';
 
 const {height, width} = Dimensions.get('window');
 
@@ -33,7 +34,6 @@ const BookDetailScreen = props => {
   const {
     route: {params},
   } = props;
-  console.log({props});
   const {data, isLoading} = useGetSingleBook(params?._id);
   const [isFree] = React.useState(() => params?.price === '0');
   const [isShowBadge, setShowBadge] = React.useState(false);
@@ -42,7 +42,6 @@ const BookDetailScreen = props => {
   const {mutate} = useEditBook(params?.name);
   const {mutate: mutateBook} = useEditSingleBook(params?._id);
 
-  console.log({test: data?.data?.bookDetail?.percent});
   const scrollerRef = useRef(null);
 
   const calculateProgress = e => {
@@ -77,13 +76,16 @@ const BookDetailScreen = props => {
       };
     }, []),
   );
-
+  const queryClient = useQueryClient();
+  console.log(data?.data?.bookDetail);
   return (
     <ScrollView
       stickyHeaderIndices={[1]}
       onScroll={handleProgress}
       ref={scrollerRef}
-      scrollEnabled={data?.data?.bookDetail?.isBought}>
+      scrollEnabled={
+        data?.data?.bookDetail && data?.data?.bookDetail?.isBought
+      }>
       <SharedElement id={`book-image${params?._id}`}>
         <LinearGradient colors={['rgba(0,0,0,0.8)', 'transparent']}>
           <ImageBackground
@@ -192,11 +194,14 @@ const BookDetailScreen = props => {
                 خرید
               </Button>
             )}
+            {console.log(isFree)}
             {isFree && !data?.data?.bookDetail?.isBought && (
               <Button
                 onPress={() => {
                   mutate({_id: params._id, isBought: true});
                   setRead(prev => !prev);
+                  queryClient.invalidateQueries(['book', params?._id]);
+                  queryClient.invalidateQueries('books');
                 }}
                 bg="tertiary.400">
                 شروع به خوانندن
@@ -204,7 +209,7 @@ const BookDetailScreen = props => {
             )}
           </HStack>
           <VStack position="relative">
-            {!data?.data?.bookDetail?.isBought && (
+            {data?.data?.bookDetail && !data?.data?.bookDetail?.isBought && (
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 0, y: 1}}

@@ -2,7 +2,6 @@ import {useQuery} from 'react-query';
 import {httpRequest} from '../apis/main';
 
 const getProvince = (province = undefined) => {
-  console.log({province});
   return httpRequest({
     method: 'GET',
     body: {},

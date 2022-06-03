@@ -17,7 +17,6 @@ const postEditBookAPI = async args => {
     headers: {},
     authorization: true,
   });
-  console.log({data, status, message});
 };
 
 export const useEditBook = bookName => {

@@ -3,7 +3,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {GREEN_COLOR} from '../../constant/styles';
 
-const Loading = ({isFull = false}) => {
+const Loading = ({isFull = true}) => {
   return (
     <Spinner color={GREEN_COLOR} style={{marginTop: isFull ? '50%' : 0}} />
   );

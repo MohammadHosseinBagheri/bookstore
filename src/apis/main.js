@@ -15,26 +15,25 @@ export const httpRequest = async ({
   isReactQuery,
   authorization = false,
 }) => {
-  const {accessToken: token} = await getData('jwt');
-  console.log(token);
+  const token = await getData('jwt');
   try {
     const _res = await customInstance({
       method,
       url,
       data: body,
-      headers: authorization
-        ? {
-            'content-type': 'application/json',
-            authorization: `Bearer ${token}`,
-            ...headers,
-          }
-        : {
-            'content-type': 'application/json',
-            ...headers,
-          },
+      headers:
+        authorization && token
+          ? {
+              'content-type': 'application/json',
+              authorization: `Bearer ${token?.accessToken}`,
+              ...headers,
+            }
+          : {
+              'content-type': 'application/json',
+              ...headers,
+            },
     });
     const status = _res.status;
-    console.log(status);
     if (status === 200 || status === 201) {
       if (isReactQuery) {
         return _res.data;
